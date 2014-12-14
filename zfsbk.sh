@@ -5,6 +5,10 @@ zpool=${ZPOOL:-"zroot"}
 
 # name of backup to take
 bkname=${1:-"default"}
+
+# change this if you are not using /.zfs
+snapdir=${SNAPDIR:-"/.zfs/snapshot"}
+
 # make a backup collection having 1 full and N-1 incremental backups.
 # set to 1 to avoid incrementals and always take full dumps.
 max_incremental=${2:-"4"}
@@ -19,6 +23,7 @@ usage () {
     echo "Optional envvars:"
     echo "UPLOAD_PATH   upload generated backup to this path. scp:// or rsync://"
     echo "CLEAR_BKFILE  remove local backup file at the end of the process."
+    echo "SNAPDIR       Directory for listing existing snapshots."
 }
 
 failmsg () {
@@ -42,7 +47,7 @@ export PATH=$PATH:/usr/local/bin
 # list snapshots by decreasing time. Arguments: [name] restrict listing to this tag
 list_named_snaps () {
     local bkname=$1
-    snapdir="/.zfs/snapshot"
+    #snapdir="/.zfs/snapshot"
     for i in $snapdir/zbk-$bkname-*
     do
         test -e "$i" && (echo $i |sed "s@^$snapdir/@@")
